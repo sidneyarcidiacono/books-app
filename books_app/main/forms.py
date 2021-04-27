@@ -5,6 +5,7 @@ from wtforms import (
     DateField,
     SelectField,
     SubmitField,
+    TextAreaField,
 )
 from wtforms.ext.sqlalchemy.fields import (
     QuerySelectField,
@@ -13,12 +14,18 @@ from wtforms.ext.sqlalchemy.fields import (
 from wtforms.validators import DataRequired, Length, ValidationError
 from books_app.models import Audience, Book, Author, Genre, User
 
+# Define our custom validator
+def validate_name(form, field):
+    if "banana" in field.data.lower():
+        raise ValidationError("Title cannot contain the word banana")
+
 
 class BookForm(FlaskForm):
     """Form to create a book."""
 
     title = StringField(
-        "Book Title", validators=[DataRequired(), Length(min=3, max=80)]
+        "Book Title",
+        validators=[DataRequired(), Length(min=3, max=80), validate_name],
     )
     publish_date = DateField("Date Published")
     author = QuerySelectField(
